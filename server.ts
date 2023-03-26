@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import { mongooseConnection } from '@connection';
 import { IUser } from '@dataTypes';
 import { user_routes } from '@routes';
