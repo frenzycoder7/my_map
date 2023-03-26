@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "my_map:8001",
+            "script": "npm",
+            "args" : "start"
+        }
+    ]
+}
