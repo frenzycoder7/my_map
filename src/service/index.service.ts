@@ -81,7 +81,8 @@ export const getLocationData = async (req: Request, res: Response) => {
                     createdAt: {
                         $gte: startDate,
                         $lte: endDate,
-                    }
+                    },
+                    user: req.user._id,
                 }
             },
             {
@@ -113,13 +114,18 @@ export const getHistory = async (req: Request, res: Response) => {
     try {
         let locations = await LocationModel.aggregate([
             {
+                $match: {
+                    user: req.user._id,
+                }
+            },
+            {
                 $sort: {
                     createdAt: -1,
                 }
             },
             {
                 $group: {
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: 'Asia/Kolkata' } },
                     count: { $sum: 1 },
                 }
             },
