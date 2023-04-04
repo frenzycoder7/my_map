@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "name": "my_map:8001",
+            "name": "cars-server:3003",
             "script": "npm",
             "args" : "start"
         }

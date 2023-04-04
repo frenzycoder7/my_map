@@ -1,28 +1,8 @@
 import { ITokenBody, IUser } from "@dataTypes";
-import { UserModel } from "@models";
-import { verifyToken } from "@utils";
+import { getUserService } from "@services";
+import { redisclient, verifyToken } from "@utils";
 import { NextFunction, Request, Response } from "express";
 
-export const isAuth = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        let token = req.headers.authorization;
-        if (!token) throw Error('Token not found');
-        let payLoad: ITokenBody = await verifyToken(token);
-        let query: any = {
-            _id: payLoad._id,
-            email: payLoad.email,
-            token: token,
-        }
-        let user: IUser | any = await UserModel.findOne(query);
-        if (user === null) throw Error('User not found or token expired');
-        req.user = user;
-        next();
-    } catch (error) {
-        res.status(500).json({
-            message: error.message,
-        });
-    }
-}
 
 export const checkRequiredBody = (keys: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -71,3 +51,54 @@ export const checkrequiredQuery = (keys: string[]) => {
         }
     }
 }
+export const filterRequiredKeys = (schema: any) => {
+    let keys = schema;
+    let requred: string[] = [];
+    for (let key in keys) {
+        if (keys[key].required && keys[key].ref == undefined && keys[key].enum == undefined) {
+            requred.push(key);
+        }
+    }
+    return requred;
+}
+
+export const isAuthenticated = (isRemove: Boolean) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let token: string | undefined = req.headers.authorization;
+
+            if (!token) throw new Error('Token is required');
+            let tokenBody: any = await verifyToken(token);
+
+            if (!tokenBody) throw new Error('TOKEN_EXPIRED');
+            tokenBody.token = token;
+
+            let user: any = await redisclient.get(JSON.stringify(tokenBody));
+
+            if (!user) {
+                user = await getUserService(tokenBody);
+                if (!user) throw new Error('TOKEN_EXPIRED');
+                await redisclient.set(JSON.stringify(tokenBody), JSON.stringify(user), 'EX', 60 * 2);
+            } else {
+                console.log('user from redis with key: ', JSON.stringify(tokenBody));
+                user = JSON.parse(user);
+            }
+
+            if (isRemove) {
+                await redisclient.del(JSON.stringify(tokenBody));
+            }
+            req.user = user;
+            next();
+        } catch (error) {
+            if (error.message == 'TOKEN_EXPIRED') {
+                res.status(401).json({
+                    message: error.message,
+                });
+            } else {
+                res.status(500).json({
+                    message: error.message,
+                });
+            }
+        }
+    }
+} 

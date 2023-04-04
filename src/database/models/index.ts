@@ -1,2 +1,1 @@
-export * from './user_mode';
-export * from './location_model';
+export * from './user_model';
