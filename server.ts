@@ -25,7 +25,9 @@ const mailServer: SMTPServer = new SMTPServer({
     }
 });
 
-mailServer.listen(25,"3.6.166.56");
+mailServer.listen(25,"127.0.0.1", () => {
+    console.log('mail server is running on port 25');
+});
 
 declare global {
     namespace Express {
