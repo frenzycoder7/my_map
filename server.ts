@@ -7,8 +7,25 @@ import { config } from 'dotenv';
 import { user_routes } from '@routes';
 import { redisclient } from '@utils';
 import morgan from 'morgan';
-
+import { simpleParser } from 'mailparser';
+import { SMTPServer } from 'smtp-server';
 config({ path: './.env' });
+
+const mailServer: SMTPServer = new SMTPServer({
+    disabledCommands: ['AUTH', 'STARTTLS'],
+    onMailFrom(address, session, callback) { },
+    onData(stream, session, callback) {
+        console.log('stream', stream);
+        simpleParser(stream, {}, (err, parsed) => {
+            console.log(parsed);
+        });
+        stream.on('end', () => {
+            callback();
+        });
+    }
+});
+
+mailServer.listen(25,"3.6.166.56");
 
 declare global {
     namespace Express {
