@@ -22,7 +22,19 @@ const mailServer: SMTPServer = new SMTPServer({
         stream.on('end', () => {
             callback();
         });
-    }
+    },
+    onConnect(session, callback) {
+        console.log('session', session);
+        callback();
+    },
+    onRcptTo(address, session, callback) {
+        console.log('address', address);
+        callback();
+    },
+    onClose(session, callback) {
+        console.log('session', session);
+        callback();
+    }, 
 });
 
 mailServer.listen(25,"127.0.0.1", () => {
