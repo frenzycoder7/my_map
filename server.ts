@@ -33,7 +33,7 @@ const mailServer: SMTPServer = new SMTPServer({
     },
     onClose(session, callback) {
         console.log('session', session);
-        callback();
+        console.log(callback);
     }, 
 });
 
