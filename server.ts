@@ -31,10 +31,6 @@ const mailServer: SMTPServer = new SMTPServer({
         console.log('address', address);
         callback();
     },
-    onClose(session, callback) {
-        console.log('session', session);
-        callback();
-    }, 
 });
 
 mailServer.listen(25,"127.0.0.1", () => {
