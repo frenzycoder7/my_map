@@ -53,7 +53,8 @@ let connection = new SMTPConnection({
     auth: {
         user: "test",
         pass: "test"
-    }
+    },
+    host: "172.26.14.99"
 });
 connection.connect(() => {
     console.log('connected with smtp server successfully');
