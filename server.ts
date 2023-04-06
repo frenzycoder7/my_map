@@ -19,29 +19,40 @@ const smtpOptions: SMTPServerOptions = {
     logger: true,
     disabledCommands: ['AUTH'],
     onAuth(auth, session, callback) {
-        console.log(auth);
+
+        console.log("===========================AUTH===========================")
         if (auth.username == 'test' && auth.password == 'test') {
             return callback(null, { user: 123 });
         }
         callback(new Error('Authentication failed'));
     },
     onData(stream, session, callback) {
-        stream.pipe(process.stdout)
+        console.log("===========================DATA===========================")
+        simpleParser(stream, (err, parsed) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(parsed);
+        });
         callback();
     },
     onMailFrom(address, session, callback) {
+        console.log("===========================MAIL===========================")
         console.log(address);
         callback();
     },
     onRcptTo(address, session, callback) {
+        console.log("===========================RCPT===========================")
         console.log(address);
         callback();
     },
     onConnect(session, callback) {
+        console.log("===========================CONNECT===========================")
         console.log(session);
         callback();
     },
     onClose(session, callback) {
+        console.log("===========================CLOSE===========================")
         console.log(session);
     },
 };
