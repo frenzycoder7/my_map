@@ -41,6 +41,9 @@ const smtpOptions: SMTPServerOptions = {
         console.log(session);
         callback();
     },
+    onClose(session, callback) {
+        console.log(session);
+    },
 };
 
 const mailServer: SMTPServer = new SMTPServer(smtpOptions);
