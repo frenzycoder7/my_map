@@ -47,7 +47,7 @@ const smtpOptions: SMTPServerOptions = {
 };
 
 const mailServer: SMTPServer = new SMTPServer(smtpOptions);
-mailServer.listen(25, "0.0.0.0", () => {
+mailServer.listen(25, () => {
     console.log('SMTP server listening on port 25');
 });
 declare global {
