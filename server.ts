@@ -8,37 +8,55 @@ import { user_routes } from '@routes';
 import { redisclient } from '@utils';
 import morgan from 'morgan';
 import { simpleParser } from 'mailparser';
-import { SMTPServer } from 'smtp-server';
+import { SMTPServer, SMTPServerOptions } from 'smtp-server';
+import { readFileSync } from 'node:fs';
 config({ path: './.env' });
 
-const mailServer: SMTPServer = new SMTPServer({
-    disabledCommands: ['AUTH', 'STARTTLS'],
-    onMailFrom(address, session, callback) { },
-    onData(stream, session, callback) {
-        console.log('stream', stream);
-        simpleParser(stream, {}, (err, parsed) => {
-            console.log(parsed);
-        });
-        stream.on('end', () => {
-            callback();
-        });
+import SMTPConnection from 'nodemailer/lib/smtp-connection';
+
+const smtpOptions: SMTPServerOptions = {
+    secure: true,
+    key: readFileSync('./cert/key.pem'),
+    cert: readFileSync('./cert/cert.pem'),
+    onAuth(auth, session, callback) {
+        console.log(auth);
+        if (auth.username == 'test' && auth.password == 'test') {
+            return callback(null, { user: 123 });
+        }
+        callback(new Error('Authentication failed'));
     },
-    onConnect(session, callback) {
-        console.log('session', session);
+    onData(stream, session, callback) {
+        stream.pipe(process.stdout)
+        callback();
+    },
+    onMailFrom(address, session, callback) {
+        console.log(address);
         callback();
     },
     onRcptTo(address, session, callback) {
-        console.log('address', address);
+        console.log(address);
         callback();
     },
-    onClose(session, callback) {
-        console.log('session', session);
-        console.log(callback);
-    }, 
+    onConnect(session, callback) {
+        console.log(session);
+        callback();
+    },
+};
+
+const mailServer: SMTPServer = new SMTPServer(smtpOptions);
+mailServer.listen(587, "172.26.14.99", () => {
+    console.log('SMTP server listening on port 465');
 });
 
-mailServer.listen(25,"127.0.0.1", () => {
-    console.log('mail server is running on port 25');
+let connection = new SMTPConnection({
+    port: 465,
+    auth: {
+        user: "test",
+        pass: "test"
+    }
+});
+connection.connect(() => {
+    console.log('connected with smtp server successfully');
 });
 
 declare global {
