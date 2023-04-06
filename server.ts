@@ -49,7 +49,7 @@ mailServer.listen(587, "172.26.14.99", () => {
 });
 
 let connection = new SMTPConnection({
-    port: 465,
+    port: 587,
     auth: {
         user: "test",
         pass: "test"
