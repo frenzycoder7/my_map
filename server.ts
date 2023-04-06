@@ -15,9 +15,9 @@ config({ path: './.env' });
 import SMTPConnection from 'nodemailer/lib/smtp-connection';
 
 const smtpOptions: SMTPServerOptions = {
-    secure: true,
-    key: readFileSync('./cert/key.pem'),
-    cert: readFileSync('./cert/cert.pem'),
+    secure: false,
+    logger: true,
+    disabledCommands: ['AUTH'],
     onAuth(auth, session, callback) {
         console.log(auth);
         if (auth.username == 'test' && auth.password == 'test') {
@@ -47,8 +47,8 @@ const smtpOptions: SMTPServerOptions = {
 };
 
 const mailServer: SMTPServer = new SMTPServer(smtpOptions);
-mailServer.listen(587, "172.26.14.99", () => {
-    console.log('SMTP server listening on port 465');
+mailServer.listen(25, "127.0.0.1", () => {
+    console.log('SMTP server listening on port 25');
 });
 declare global {
     namespace Express {
