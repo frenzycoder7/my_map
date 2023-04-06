@@ -47,19 +47,6 @@ const mailServer: SMTPServer = new SMTPServer(smtpOptions);
 mailServer.listen(587, "172.26.14.99", () => {
     console.log('SMTP server listening on port 465');
 });
-
-let connection = new SMTPConnection({
-    port: 587,
-    auth: {
-        user: "test",
-        pass: "test"
-    },
-    host: "172.26.14.99"
-});
-connection.connect(() => {
-    console.log('connected with smtp server successfully');
-});
-
 declare global {
     namespace Express {
         interface Request {
