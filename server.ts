@@ -19,6 +19,7 @@ const smtpOptions: SMTPServerOptions = {
     logger: true,
     authMethods: ['PLAIN', 'LOGIN', 'XOAUTH2'],
 
+
     onAuth(auth, session, callback) {
         console.log(auth);
         console.log(session);
