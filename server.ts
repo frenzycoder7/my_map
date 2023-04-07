@@ -18,7 +18,8 @@ const smtpOptions: SMTPServerOptions = {
     secure: true,
     logger: true,
     authMethods: ['PLAIN', 'LOGIN', 'XOAUTH2'],
-
+    key: readFileSync('./openssl/rootCA.key'),
+    cert: readFileSync('./openssl/rootCA.pem'),
 
     onAuth(auth, session, callback) {
         console.log(auth);
