@@ -15,11 +15,13 @@ config({ path: './.env' });
 import SMTPConnection from 'nodemailer/lib/smtp-connection';
 
 const smtpOptions: SMTPServerOptions = {
-    secure: false,
+    secure: true,
     logger: true,
-    disabledCommands: ['AUTH'],
-    onAuth(auth, session, callback) {
+    authMethods: ['PLAIN', 'LOGIN', 'XOAUTH2'],
 
+    onAuth(auth, session, callback) {
+        console.log(auth);
+        console.log(session);
         console.log("===========================AUTH===========================")
         if (auth.username == 'test' && auth.password == 'test') {
             return callback(null, { user: 123 });
@@ -27,32 +29,32 @@ const smtpOptions: SMTPServerOptions = {
         callback(new Error('Authentication failed'));
     },
     onData(stream, session, callback) {
-        console.log("===========================DATA===========================")
-        simpleParser(stream, (err, parsed) => {
-            if (err) {
-                console.log(err);
-            }
-            console.log(parsed);
-        });
+        // console.log("===========================DATA===========================")
+        // simpleParser(stream, (err, parsed) => {
+        //     if (err) {
+        //         console.log(err);
+        //     }
+        //     console.log(parsed);
+        // });
         callback();
     },
     onMailFrom(address, session, callback) {
-        console.log("===========================MAIL===========================")
-        console.log(address);
+        // console.log("===========================MAIL===========================")
+        // console.log(address);
         callback();
     },
     onRcptTo(address, session, callback) {
-        console.log("===========================RCPT===========================")
-        console.log(address);
+        // console.log("===========================RCPT===========================")
+        // console.log(address);
         callback();
     },
     onConnect(session, callback) {
-        console.log("===========================CONNECT===========================")
-        console.log(session);
+        // console.log("===========================CONNECT===========================")
+        // console.log(session);
         callback();
     },
     onClose(session, callback) {
-        console.log("===========================CLOSE===========================")
+        // console.log("===========================CLOSE===========================")
         console.log(session);
     },
 };

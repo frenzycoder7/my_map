@@ -8,12 +8,12 @@ import { createTransport, SendMailOptions } from 'nodemailer'
 import { config } from 'dotenv';
 config({ path: './.env' });
 export const transporterOptions = createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
+    host: 'smtp.booringcodes.in',
+    port: 25,
     secure: true,
     auth: {
-        user: process.env.MAIL,
-        pass: process.env.MAIL_PASSWORD
+        user: process.env.NEW_MAIL,
+        pass: process.env.NEW_PASSWORD
     }
 });
 
